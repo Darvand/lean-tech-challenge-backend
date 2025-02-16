@@ -1,0 +1,32 @@
+version: '3.8'
+services:
+  app:
+    container_name: backend
+    command: npm run start:dev
+    build:
+      context: ./
+      dockerfile: Dockerfile
+      target: builder
+    environment:
+      DATABASE_NAME: events
+      DATABASE_USER: dev
+      DATABASE_PASS: dev
+      DATABASE_URI: mongodb://database:27017
+      PORT: 4000
+    ports:
+      - '4000:4000'
+    depends_on:
+      - database
+    volumes:
+      - ./src:/app/src
+
+  # start the mongodb service as container
+  database:
+    image: mongo:6.0
+    container_name: mongodb
+    restart: always
+    ports:
+      - '27017:27017'
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: dev
+      MONGO_INITDB_ROOT_PASSWORD: dev
