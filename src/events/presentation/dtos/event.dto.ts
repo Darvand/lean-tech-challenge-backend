@@ -1,6 +1,6 @@
 import { ApiProperty } from '@nestjs/swagger';
 
-class ListTicketsDto {
+class TicketDto {
   @ApiProperty()
   readonly id: string;
   @ApiProperty()
@@ -22,7 +22,7 @@ class LocationDto {
   readonly longitude: number;
 }
 
-export class ListEventsDto {
+export class EventDto {
   @ApiProperty()
   readonly id: string;
   @ApiProperty()
@@ -37,6 +37,6 @@ export class ListEventsDto {
   readonly endDate: string;
   @ApiProperty({ type: LocationDto })
   readonly location: LocationDto;
-  @ApiProperty({ type: [ListTicketsDto] })
-  readonly tickets: ListTicketsDto[];
+  @ApiProperty({ type: [TicketDto] })
+  readonly tickets: TicketDto[];
 }

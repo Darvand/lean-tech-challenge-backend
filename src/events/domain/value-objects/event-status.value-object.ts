@@ -22,4 +22,14 @@ export class EventStatus extends ValueObject<EventStatusProps> {
     }
     return new EventStatus({ value: value as EventStatusType });
   }
+
+  isValidTransitionTo(nextStatus: EventStatus): boolean {
+    if (this.value === 'draft' && nextStatus.value === 'published') {
+      return true;
+    }
+    if (this.value === 'published' && nextStatus.value === 'unpublished') {
+      return true;
+    }
+    return false;
+  }
 }

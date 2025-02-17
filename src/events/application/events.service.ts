@@ -3,9 +3,11 @@ import { EVENTS_PROVIDER } from '../events.provider';
 import { EventsRepository } from '../domain/services/events.repository';
 import { CreateEventDto } from '../presentation/dtos/create-event.dto';
 import { EventMapper } from '../mappers/event.mapper';
-import { ListEventsDto } from '../presentation/dtos/list-events.dto';
+import { EventDto } from '../presentation/dtos/event.dto';
 import { ListPaginationDto } from 'src/shared/presentation/dtos/list-pagination.dto';
 import { PaginationParamsDto } from 'src/shared/presentation/dtos/pagination-params.dto';
+import { EventStatus } from '../domain/value-objects/event-status.value-object';
+import { UUID } from 'src/shared/domain/value-objects/uuid.value-object';
 
 @Injectable()
 export class EventsService {
@@ -16,7 +18,7 @@ export class EventsService {
 
   async findWithPagination(
     paginationParamsDto: PaginationParamsDto,
-  ): Promise<ListPaginationDto<ListEventsDto>> {
+  ): Promise<ListPaginationDto<EventDto>> {
     const eventsPagination =
       await this.eventsRepository.findWithPagination(paginationParamsDto);
     return {
@@ -30,5 +32,12 @@ export class EventsService {
   create(createEventDto: CreateEventDto): Promise<void> {
     const event = EventMapper.toDomain({ ...createEventDto, status: 'draft' });
     return this.eventsRepository.create(event);
+  }
+
+  async updateStatus(id: UUID, nextStatus: EventStatus): Promise<EventDto> {
+    const event = await this.eventsRepository.findOne(id);
+    event.updateStatus(nextStatus);
+    const eventUpdated = await this.eventsRepository.update(event);
+    return EventMapper.toDto(eventUpdated);
   }
 }

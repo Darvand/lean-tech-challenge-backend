@@ -9,7 +9,7 @@ import { Location } from '../domain/value-objects/location.value-object';
 import { EventStatus } from '../domain/value-objects/event-status.value-object';
 import { Title } from '../domain/value-objects/title.value-object';
 import { Event } from '../infraestructure/schemas/event.schema';
-import { ListEventsDto } from '../presentation/dtos/list-events.dto';
+import { EventDto } from '../presentation/dtos/event.dto';
 import { UUID } from 'src/shared/domain/value-objects/uuid.value-object';
 
 export class EventMapper {
@@ -26,7 +26,6 @@ export class EventMapper {
         UUID.from(ticket.id),
       );
     });
-    console.log('event id', eventRaw.id);
     const event = EventAggregate.create(
       {
         description: Description.create(eventRaw.description),
@@ -76,7 +75,7 @@ export class EventMapper {
     };
   }
 
-  static toDto(event: EventAggregate): ListEventsDto {
+  static toDto(event: EventAggregate): EventDto {
     return {
       id: event.id.value,
       title: event.title.value,

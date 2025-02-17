@@ -1,4 +1,8 @@
-import { Injectable } from '@nestjs/common';
+import {
+  Injectable,
+  NotFoundException,
+  UnprocessableEntityException,
+} from '@nestjs/common';
 import { EventsRepository } from '../../domain/services/events.repository';
 import { EventAggregate } from '../../domain/entities/event-aggregate.entity';
 import { InjectModel } from '@nestjs/mongoose';
@@ -7,6 +11,8 @@ import { Model } from 'mongoose';
 import { EventMapper } from 'src/events/mappers/event.mapper';
 import { PaginationParamsDto } from 'src/shared/presentation/dtos/pagination-params.dto';
 import { ListPaginationDto } from 'src/shared/presentation/dtos/list-pagination.dto';
+import { UUID } from 'src/shared/domain/value-objects/uuid.value-object';
+import { DatabaseException } from 'src/shared/presentation/exceptions/database.exception';
 
 const LIMIT_MAX = 100;
 @Injectable()
@@ -34,8 +40,16 @@ export class EventsMongoRepository implements EventsRepository {
     };
   }
 
-  async findOne(id: string): Promise<EventAggregate> {
-    return null;
+  async findOne(id: UUID): Promise<EventAggregate> {
+    try {
+      const event = await this.model.findOne({ id: id.value }).exec();
+      if (!event) {
+        throw new NotFoundException(`Event with id ${id.value} not found`);
+      }
+      return EventMapper.toDomain(event);
+    } catch (error) {
+      throw new DatabaseException(error);
+    }
   }
 
   async create(event: EventAggregate): Promise<void> {
@@ -43,11 +57,23 @@ export class EventsMongoRepository implements EventsRepository {
     await this.model.create(eventModel);
   }
 
-  async update(event: EventAggregate): Promise<void> {
-    return null;
+  async update(event: EventAggregate): Promise<EventAggregate> {
+    try {
+      const updated = await this.model
+        .updateOne({ id: event.id.value }, EventMapper.toPersistance(event))
+        .exec();
+      if (updated.modifiedCount === 0) {
+        throw new UnprocessableEntityException(
+          `Event with id ${event.id.value} not updated`,
+        );
+      }
+      return event;
+    } catch (error) {
+      throw new DatabaseException(error);
+    }
   }
 
-  async delete(id: string): Promise<void> {
+  async delete(id: UUID): Promise<void> {
     return null;
   }
 }
