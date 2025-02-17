@@ -9,36 +9,45 @@ import { Location } from '../domain/value-objects/location.value-object';
 import { EventStatus } from '../domain/value-objects/event-status.value-object';
 import { Title } from '../domain/value-objects/title.value-object';
 import { Event } from '../infraestructure/schemas/event.schema';
+import { ListEventsDto } from '../presentation/dtos/list-events.dto';
+import { UUID } from 'src/shared/domain/value-objects/uuid.value-object';
 
 export class EventMapper {
   static toDomain(eventRaw: any): EventAggregate {
     const tickets = eventRaw.tickets?.map((ticket) => {
-      return EventTicket.create({
-        type: TicketType.create(ticket.type),
-        price: Number.create(ticket.price),
-        available: Number.create(ticket.available),
-        purchaseLimit: Number.create(ticket.purchaseLimit),
-        benefits: Benefits.create(ticket.benefits),
-      });
+      return EventTicket.create(
+        {
+          type: TicketType.create(ticket.type),
+          price: Number.create(ticket.price),
+          available: Number.create(ticket.available),
+          purchaseLimit: Number.create(ticket.purchaseLimit),
+          benefits: Benefits.create(ticket.benefits),
+        },
+        UUID.from(ticket.id),
+      );
     });
-    const event = EventAggregate.create({
-      description: Description.create(eventRaw.description),
-      startDate:
-        typeof eventRaw.startDate === 'string'
-          ? DateValue.createFromString(eventRaw.startDate)
-          : DateValue.createFromJSDate(eventRaw.startDate),
-      endDate:
-        typeof eventRaw.endDate === 'string'
-          ? DateValue.createFromString(eventRaw.endDate)
-          : DateValue.createFromJSDate(eventRaw.endDate),
-      location: Location.create(
-        eventRaw.location.latitude,
-        eventRaw.location.longitude,
-      ),
-      status: EventStatus.create(eventRaw.status),
-      title: Title.create(eventRaw.title),
-      tickets,
-    });
+    console.log('event id', eventRaw.id);
+    const event = EventAggregate.create(
+      {
+        description: Description.create(eventRaw.description),
+        startDate:
+          typeof eventRaw.startDate === 'string'
+            ? DateValue.createFromString(eventRaw.startDate)
+            : DateValue.createFromJSDate(eventRaw.startDate),
+        endDate:
+          typeof eventRaw.endDate === 'string'
+            ? DateValue.createFromString(eventRaw.endDate)
+            : DateValue.createFromJSDate(eventRaw.endDate),
+        location: Location.create(
+          eventRaw.location.latitude,
+          eventRaw.location.longitude,
+        ),
+        status: EventStatus.create(eventRaw.status),
+        title: Title.create(eventRaw.title),
+        tickets,
+      },
+      UUID.from(eventRaw.id),
+    );
     return event;
   }
 
@@ -50,6 +59,31 @@ export class EventMapper {
       status: event.status.value,
       startDate: event.startDate.date,
       endDate: event.endDate.date,
+      location: {
+        latitude: event.location.latitude,
+        longitude: event.location.longitude,
+      },
+      tickets: event.tickets.map((ticket) => {
+        return {
+          id: ticket.id.value,
+          type: ticket.type.value,
+          price: ticket.price.value,
+          available: ticket.available.value,
+          purchaseLimit: ticket.purchaseLimit.value,
+          benefits: ticket.benefits.value,
+        };
+      }),
+    };
+  }
+
+  static toDto(event: EventAggregate): ListEventsDto {
+    return {
+      id: event.id.value,
+      title: event.title.value,
+      description: event.description.value,
+      status: event.status.value,
+      startDate: event.startDate.ISO8601,
+      endDate: event.endDate.ISO8601,
       location: {
         latitude: event.location.latitude,
         longitude: event.location.longitude,

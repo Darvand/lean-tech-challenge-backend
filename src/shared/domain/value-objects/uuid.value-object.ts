@@ -17,4 +17,8 @@ export class UUID extends ValueObject<UUIDProps> {
   static generate(): UUID {
     return new UUID({ value: randomUUID() });
   }
+
+  static from(value: string): UUID {
+    return new UUID({ value });
+  }
 }
