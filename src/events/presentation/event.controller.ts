@@ -1,6 +1,7 @@
 import {
   Body,
   Controller,
+  Delete,
   Get,
   Param,
   Patch,
@@ -15,6 +16,7 @@ import { PaginationParamsDto } from 'src/shared/presentation/dtos/pagination-par
 import {
   ApiCreatedResponse,
   ApiExtraModels,
+  ApiNoContentResponse,
   ApiOkResponse,
   ApiTags,
   getSchemaPath,
@@ -52,9 +54,10 @@ export class EventsController {
 
   @ApiCreatedResponse({
     description: 'The event has been successfully created.',
+    type: EventDto,
   })
   @Post()
-  create(@Body() createEventDto: CreateEventDto) {
+  create(@Body() createEventDto: CreateEventDto): Promise<EventDto> {
     return this.eventsService.create(createEventDto);
   }
 
@@ -68,5 +71,17 @@ export class EventsController {
       UUID.from(id),
       EventStatus.create(updateStatusDto.status),
     );
+  }
+
+  @ApiNoContentResponse()
+  @Delete(':id')
+  delete(@Param('id') id: string): Promise<void> {
+    return this.eventsService.delete(UUID.from(id));
+  }
+
+  @ApiOkResponse({ type: EventDto })
+  @Get(':id')
+  findOne(@Param('id') id: string): Promise<EventDto> {
+    return this.eventsService.findOne(UUID.from(id));
   }
 }

@@ -29,9 +29,10 @@ export class EventsService {
     };
   }
 
-  create(createEventDto: CreateEventDto): Promise<void> {
+  async create(createEventDto: CreateEventDto): Promise<EventDto> {
     const event = EventMapper.toDomain({ ...createEventDto, status: 'draft' });
-    return this.eventsRepository.create(event);
+    const eventCreated = await this.eventsRepository.create(event);
+    return EventMapper.toDto(eventCreated);
   }
 
   async updateStatus(id: UUID, nextStatus: EventStatus): Promise<EventDto> {
@@ -39,5 +40,14 @@ export class EventsService {
     event.updateStatus(nextStatus);
     const eventUpdated = await this.eventsRepository.update(event);
     return EventMapper.toDto(eventUpdated);
+  }
+
+  async delete(id: UUID): Promise<void> {
+    await this.eventsRepository.delete(id);
+  }
+
+  async findOne(id: UUID): Promise<EventDto> {
+    const event = await this.eventsRepository.findOne(id);
+    return EventMapper.toDto(event);
   }
 }

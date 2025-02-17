@@ -8,7 +8,7 @@ export interface EventsRepository {
     paginationParamsDto: PaginationParamsDto,
   ): Promise<ListPaginationDto<EventAggregate>>;
   findOne(id: UUID): Promise<EventAggregate>;
-  create(event: EventAggregate): Promise<void>;
+  create(event: EventAggregate): Promise<EventAggregate>;
   update(event: EventAggregate): Promise<EventAggregate>;
   delete(id: UUID): Promise<void>;
 }

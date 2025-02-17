@@ -52,9 +52,10 @@ export class EventsMongoRepository implements EventsRepository {
     }
   }
 
-  async create(event: EventAggregate): Promise<void> {
+  async create(event: EventAggregate): Promise<EventAggregate> {
     const eventModel = EventMapper.toPersistance(event);
-    await this.model.create(eventModel);
+    const eventCreated = await this.model.create(eventModel);
+    return EventMapper.toDomain(eventCreated);
   }
 
   async update(event: EventAggregate): Promise<EventAggregate> {
@@ -74,6 +75,6 @@ export class EventsMongoRepository implements EventsRepository {
   }
 
   async delete(id: UUID): Promise<void> {
-    return null;
+    await this.model.deleteOne({ id: id.value }).exec();
   }
 }
