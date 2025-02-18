@@ -6,6 +6,7 @@ import { EventsService } from './application/events.service';
 import { DatabaseModule } from 'src/database/database.module';
 import { MongooseModule } from '@nestjs/mongoose';
 import { Event, EventSchema } from './infraestructure/schemas/event.schema';
+import { AuthModule } from 'src/auth/auth.module';
 
 @Module({
   controllers: [EventsController],
@@ -18,6 +19,7 @@ import { Event, EventSchema } from './infraestructure/schemas/event.schema';
   ],
   imports: [
     DatabaseModule,
+    AuthModule,
     MongooseModule.forFeature([{ name: Event.name, schema: EventSchema }]),
   ],
 })

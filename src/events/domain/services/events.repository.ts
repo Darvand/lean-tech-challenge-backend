@@ -6,6 +6,7 @@ import { UUID } from 'src/shared/domain/value-objects/uuid.value-object';
 export interface EventsRepository {
   findWithPagination(
     paginationParamsDto: PaginationParamsDto,
+    userId: string,
   ): Promise<ListPaginationDto<EventAggregate>>;
   findOne(id: UUID): Promise<EventAggregate>;
   create(event: EventAggregate): Promise<EventAggregate>;

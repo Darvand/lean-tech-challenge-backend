@@ -19,6 +19,10 @@ export class DateValue extends ValueObject<DateValueProps> {
     return this.props.value.toISO();
   }
 
+  get formatedDate(): string {
+    return this.props.value.toFormat('LLL dd');
+  }
+
   private constructor(props: DateValueProps) {
     super(props);
   }
@@ -26,14 +30,14 @@ export class DateValue extends ValueObject<DateValueProps> {
   static createFromString(value: string): DateValue {
     if (!value) {
       throw new UnprocessableEntityException(
-        'Date with format  "MM/dd/yyyy" is required',
+        'Date with format  "yyyy-MM-dd" is required',
       );
     }
-    const date = DateTime.fromFormat(value, 'MM/dd/yyyy');
+    const date = DateTime.fromFormat(value, 'yyyy-MM-dd');
 
     if (!date.isValid) {
       throw new UnprocessableEntityException(
-        `Invalid date. Format should be "MM/dd/yyyy": ${value}`,
+        `Invalid date. Format should be "yyyy-MM-dd": ${value}`,
       );
     }
     return new DateValue({ value: date });

@@ -11,6 +11,7 @@ import { Title } from '../domain/value-objects/title.value-object';
 import { Event } from '../infraestructure/schemas/event.schema';
 import { EventDto } from '../presentation/dtos/event.dto';
 import { UUID } from 'src/shared/domain/value-objects/uuid.value-object';
+import { EventResponseDto } from '../presentation/dtos/event-response.dto';
 
 export class EventMapper {
   static toDomain(eventRaw: any): EventAggregate {
@@ -28,6 +29,7 @@ export class EventMapper {
     });
     const event = EventAggregate.create(
       {
+        userId: eventRaw.userId,
         description: Description.create(eventRaw.description),
         startDate:
           typeof eventRaw.startDate === 'string'
@@ -53,6 +55,7 @@ export class EventMapper {
   static toPersistance(event: EventAggregate): Event {
     return {
       id: event.id.value,
+      userId: event.userId,
       title: event.title.value,
       description: event.description.value,
       status: event.status.value,
@@ -81,8 +84,8 @@ export class EventMapper {
       title: event.title.value,
       description: event.description.value,
       status: event.status.value,
-      startDate: event.startDate.ISO8601,
-      endDate: event.endDate.ISO8601,
+      startDate: event.startDate.formatedDate,
+      endDate: event.endDate.formatedDate,
       location: {
         latitude: event.location.latitude,
         longitude: event.location.longitude,
@@ -97,6 +100,17 @@ export class EventMapper {
           benefits: ticket.benefits.value,
         };
       }),
+    };
+  }
+
+  static toDtoResponse(event: EventAggregate): EventResponseDto {
+    return {
+      id: event.id.value,
+      title: event.title.value,
+      description: event.description.value,
+      status: event.status.value,
+      date: event.getFormatedDate(),
+      ticketsAvailable: event.getTicketsAvailable(),
     };
   }
 }

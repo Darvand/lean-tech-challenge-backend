@@ -21,6 +21,7 @@ export class EventsMongoRepository implements EventsRepository {
 
   async findWithPagination(
     paginationParamsDto: PaginationParamsDto,
+    userId: string,
   ): Promise<ListPaginationDto<EventAggregate>> {
     const eventAmount = await this.model.countDocuments().exec();
     const limit =
@@ -28,9 +29,10 @@ export class EventsMongoRepository implements EventsRepository {
         ? LIMIT_MAX
         : paginationParamsDto.limit;
     const events = await this.model
-      .find()
+      .find({ userId })
       .skip((paginationParamsDto.page - 1) * limit)
       .limit(limit)
+      .sort({ createdAt: -1 })
       .exec();
     return {
       total: eventAmount,

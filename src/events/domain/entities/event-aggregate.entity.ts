@@ -9,6 +9,7 @@ import { EventTicket } from './event-ticket.entity';
 import { DomainException } from 'src/shared/presentation/exceptions/domain.exception';
 
 export interface EventProps {
+  userId: string;
   title: Title;
   description?: Description;
   status: EventStatus;
@@ -43,8 +44,28 @@ export class EventAggregate extends Entity<EventProps> {
     this.props.status = nextStatus;
   }
 
+  getFormatedDate(): string {
+    return `${this.startDate.formatedDate} - ${this.endDate.formatedDate}`;
+  }
+
+  getTicketsAvailable(): number {
+    return this.tickets.reduce(
+      (acc, ticket) => acc + ticket.available.value,
+      0,
+    );
+  }
+
+  isFromUser(userId: string): boolean {
+    console.log('userId', userId, 'this.props.userId', this.props.userId);
+    return this.props.userId === userId;
+  }
+
   get id(): UUID {
     return this._id;
+  }
+
+  get userId(): string {
+    return this.props.userId;
   }
 
   get title(): Title {

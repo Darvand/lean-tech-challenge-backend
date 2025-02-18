@@ -13,6 +13,9 @@ export class Event {
   id: string;
 
   @Prop()
+  userId: string;
+
+  @Prop()
   title: string;
 
   @Prop()
@@ -37,6 +40,9 @@ export class Event {
     type: [{ type: TicketSchema }],
   })
   tickets: Ticket[];
+
+  @Prop({ default: Date.now })
+  createdAt?: Date;
 }
 
 export const EventSchema = SchemaFactory.createForClass(Event);

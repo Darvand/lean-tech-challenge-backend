@@ -12,6 +12,8 @@ services:
       DATABASE_USER: dev
       DATABASE_PASS: dev
       DATABASE_URI: mongodb://database:27017
+      AUTH0_ISSUER_URL: https://darvand.auth0.com/
+      AUTH0_AUDIENCE: https://ticket-system.com
       PORT: 4000
     ports:
       - '4000:4000'

@@ -3,10 +3,13 @@ import {
   Controller,
   Delete,
   Get,
+  Logger,
   Param,
   Patch,
   Post,
   Query,
+  Req,
+  UseGuards,
 } from '@nestjs/common';
 import { EventsService } from '../application/events.service';
 import { CreateEventDto } from './dtos/create-event.dto';
@@ -24,10 +27,14 @@ import {
 import { UpdateStatusDto } from 'src/shared/presentation/dtos/update-status.dto';
 import { EventStatus } from '../domain/value-objects/event-status.value-object';
 import { UUID } from 'src/shared/domain/value-objects/uuid.value-object';
+import { EventResponseDto } from './dtos/event-response.dto';
+import { AuthGuard } from '@nestjs/passport';
 
+@UseGuards(AuthGuard('jwt'))
 @ApiTags('Events')
 @Controller({ path: 'events', version: '1' })
 export class EventsController {
+  private readonly logger = new Logger(EventsController.name);
   constructor(private readonly eventsService: EventsService) {}
 
   @ApiExtraModels(ListPaginationDto, EventDto)
@@ -47,9 +54,11 @@ export class EventsController {
   })
   @Get()
   pagination(
+    @Req() req: any,
     @Query() pagination: PaginationParamsDto,
-  ): Promise<ListPaginationDto<EventDto>> {
-    return this.eventsService.findWithPagination(pagination);
+  ): Promise<ListPaginationDto<EventResponseDto>> {
+    this.logger.log(`User with id ${req.user.sub} is requesting list events`);
+    return this.eventsService.findWithPagination(pagination, req.user.sub);
   }
 
   @ApiCreatedResponse({
@@ -57,31 +66,46 @@ export class EventsController {
     type: EventDto,
   })
   @Post()
-  create(@Body() createEventDto: CreateEventDto): Promise<EventDto> {
-    return this.eventsService.create(createEventDto);
+  create(
+    @Req() req: any,
+    @Body() createEventDto: CreateEventDto,
+  ): Promise<EventDto> {
+    this.logger.log(`User with id ${req.user.sub} is creating a new event`);
+    return this.eventsService.create(createEventDto, req.user.sub);
   }
 
   @ApiOkResponse({ type: EventDto })
   @Patch(':id')
   updateStatus(
+    @Req() req: any,
     @Param('id') id: string,
     @Body() updateStatusDto: UpdateStatusDto,
   ): Promise<EventDto> {
+    this.logger.log(
+      `User with id ${req.user.sub} is updating status of event with id ${id}`,
+    );
     return this.eventsService.updateStatus(
       UUID.from(id),
       EventStatus.create(updateStatusDto.status),
+      req.user.sub,
     );
   }
 
   @ApiNoContentResponse()
   @Delete(':id')
-  delete(@Param('id') id: string): Promise<void> {
-    return this.eventsService.delete(UUID.from(id));
+  delete(@Req() req: any, @Param('id') id: string): Promise<void> {
+    this.logger.log(
+      `User with id ${req.user.sub} is deleting event with id ${id}`,
+    );
+    return this.eventsService.delete(UUID.from(id), req.user.sub);
   }
 
   @ApiOkResponse({ type: EventDto })
   @Get(':id')
-  findOne(@Param('id') id: string): Promise<EventDto> {
-    return this.eventsService.findOne(UUID.from(id));
+  findOne(@Req() req: any, @Param('id') id: string): Promise<EventDto> {
+    this.logger.log(
+      `User with id ${req.user.sub} is requesting event with id ${id}`,
+    );
+    return this.eventsService.findOne(UUID.from(id), req.user.sub);
   }
 }
