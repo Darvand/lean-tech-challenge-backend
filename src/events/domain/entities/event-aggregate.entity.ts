@@ -1,17 +1,17 @@
-import { UUID } from 'src/shared/domain/value-objects/uuid.value-object';
-import { DateValue } from 'src/shared/domain/value-objects/date-value.value-object';
+import { UUID } from '../../../shared/domain/value-objects/uuid.value-object';
+import { DateValue } from '../../../shared/domain/value-objects/date-value.value-object';
 import { Description } from '../value-objects/description.value-object';
 import { EventStatus } from '../value-objects/event-status.value-object';
 import { Location } from '../value-objects/location.value-object';
 import { Title } from '../value-objects/title.value-object';
-import { Entity } from 'src/shared/domain/entities/entity';
+import { Entity } from '../../../shared/domain/entities/entity';
 import { EventTicket } from './event-ticket.entity';
-import { DomainException } from 'src/shared/presentation/exceptions/domain.exception';
+import { DomainException } from '../../../shared/presentation/exceptions/domain.exception';
 
 export interface EventProps {
   userId: string;
   title: Title;
-  description?: Description;
+  description: Description;
   status: EventStatus;
   startDate: DateValue;
   endDate: DateValue;
@@ -56,7 +56,6 @@ export class EventAggregate extends Entity<EventProps> {
   }
 
   isFromUser(userId: string): boolean {
-    console.log('userId', userId, 'this.props.userId', this.props.userId);
     return this.props.userId === userId;
   }
 

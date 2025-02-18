@@ -1,6 +1,6 @@
 import { UnprocessableEntityException } from '@nestjs/common';
 import { DateTime } from 'luxon';
-import { ValueObject } from 'src/shared/domain/value-objects/value-object';
+import { ValueObject } from './value-object';
 
 interface DateValueProps {
   value: DateTime;

@@ -1,0 +1,28 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`EventsService findOne should call findOne method from repository 1`] = `
+{
+  "description": "description",
+  "endDate": "Feb 18",
+  "id": Any<String>,
+  "location": {
+    "latitude": 0,
+    "longitude": 0,
+  },
+  "startDate": "Feb 18",
+  "status": "draft",
+  "tickets": [
+    {
+      "available": 100,
+      "benefits": [
+        "benefit",
+      ],
+      "id": Any<String>,
+      "price": 10,
+      "purchaseLimit": 10,
+      "type": "general-admission",
+    },
+  ],
+  "title": "title",
+}
+`;

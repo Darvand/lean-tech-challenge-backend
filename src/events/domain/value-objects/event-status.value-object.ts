@@ -1,4 +1,4 @@
-import { ValueObject } from 'src/shared/domain/value-objects/value-object';
+import { ValueObject } from '../../../shared/domain/value-objects/value-object';
 
 export const EventStatusValues = ['draft', 'published', 'unpublished'] as const;
 type EventStatusType = (typeof EventStatusValues)[number];

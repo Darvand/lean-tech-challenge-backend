@@ -1,8 +1,8 @@
-import { Entity } from 'src/shared/domain/entities/entity';
+import { Entity } from '../../../shared/domain/entities/entity';
 import { TicketType } from '../value-objects/ticket-types.value-object';
-import { Number } from 'src/shared/domain/value-objects/number.value-object';
+import { Number } from '../../../shared/domain/value-objects/number.value-object';
 import { Benefits } from '../value-objects/benefits.value-object';
-import { UUID } from 'src/shared/domain/value-objects/uuid.value-object';
+import { UUID } from '../../../shared/domain/value-objects/uuid.value-object';
 
 interface TicketProps {
   type: TicketType;

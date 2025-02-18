@@ -1,16 +1,16 @@
-import { Number } from 'src/shared/domain/value-objects/number.value-object';
+import { Number } from '../../shared/domain/value-objects/number.value-object';
 import { EventAggregate } from '../domain/entities/event-aggregate.entity';
 import { EventTicket } from '../domain/entities/event-ticket.entity';
 import { TicketType } from '../domain/value-objects/ticket-types.value-object';
 import { Benefits } from '../domain/value-objects/benefits.value-object';
 import { Description } from '../domain/value-objects/description.value-object';
-import { DateValue } from 'src/shared/domain/value-objects/date-value.value-object';
+import { DateValue } from '../../shared/domain/value-objects/date-value.value-object';
 import { Location } from '../domain/value-objects/location.value-object';
 import { EventStatus } from '../domain/value-objects/event-status.value-object';
 import { Title } from '../domain/value-objects/title.value-object';
 import { Event } from '../infraestructure/schemas/event.schema';
 import { EventDto } from '../presentation/dtos/event.dto';
-import { UUID } from 'src/shared/domain/value-objects/uuid.value-object';
+import { UUID } from '../../shared/domain/value-objects/uuid.value-object';
 import { EventResponseDto } from '../presentation/dtos/event-response.dto';
 
 export class EventMapper {

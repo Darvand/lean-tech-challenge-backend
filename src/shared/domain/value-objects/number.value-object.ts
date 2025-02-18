@@ -1,4 +1,4 @@
-import { ValueObject } from 'src/shared/domain/value-objects/value-object';
+import { ValueObject } from './value-object';
 
 interface NumberProps {
   value: number;
